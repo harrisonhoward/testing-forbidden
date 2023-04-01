@@ -1,6 +1,8 @@
 import { SapphireClient } from "@sapphire/framework";
 import { GatewayIntentBits } from "discord.js";
 
+import "@sapphire/plugin-logger/register";
+
 // Setup dotenv for our '.env' file with our token under 'BOT_TOKEN
 import dotenv from "dotenv";
 dotenv.config();

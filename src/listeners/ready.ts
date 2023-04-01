@@ -13,12 +13,12 @@ export class ReadyListener extends Listener {
     public run(bot: Client) {
         if (!bot.user) {
             this.container.logger.error(
-                "Ready : Bot has initialised with no user"
+                "Ready: Bot has initialised with no user"
             );
             return;
         }
         this.container.logger.info(
-            `Ready : Bot has initialised as ${bot.user.tag} (${bot.user.id})`
+            `Ready: Bot has initialised as ${bot.user.tag} (${bot.user.id})`
         );
     }
 }
