@@ -206,11 +206,6 @@ file-type@^18.2.1:
     strtok3 "^7.0.0"
     token-types "^5.0.1"
 
-forbidden-node-logger@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/forbidden-node-logger/-/forbidden-node-logger-1.4.2.tgz#3a848f4051429d7fbe9037722deaa047f8a50f95"
-  integrity sha512-P74iau7TY08dMAogWvKNfJC4xaTl6jUaSmf5N+POaEZlqA/SurZGmuhJnS0Ss11sEKAHOzm8CiSDJn/g4zhe0A==
-
 ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
