@@ -12,7 +12,8 @@
     "dependencies": {
         "@sapphire/framework": "^4.2.2",
         "discord.js": "14",
-        "dotenv": "^16.0.3"
+        "dotenv": "^16.0.3",
+        "forbidden-node-logger": "^1.4.2"
     },
     "devDependencies": {
         "@types/node": "^18.15.11",
