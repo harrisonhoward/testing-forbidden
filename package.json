@@ -13,7 +13,8 @@
         "@sapphire/framework": "^4.2.2",
         "@sapphire/plugin-logger": "^3.0.1",
         "discord.js": "14",
-        "dotenv": "^16.0.3"
+        "dotenv": "^16.0.3",
+        "mongoose": "^7.0.3"
     },
     "devDependencies": {
         "@types/node": "^18.15.11",
