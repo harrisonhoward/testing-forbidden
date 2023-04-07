@@ -1,5 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import { container } from "@sapphire/framework";
+
+// Utils
+import { schemaToModel } from "../utils";
 
 export interface MongoProviderOptions {
     /**
@@ -27,14 +30,23 @@ export interface MongoConnection {
     };
 }
 
-export class MongoProvider {
+export class MongoProvider<S extends Record<string, mongoose.Schema>> {
     options: MongoConnection;
     db: typeof mongoose | undefined;
-    private connectionAttempts: number;
 
-    constructor(options: MongoProviderOptions) {
+    private connectionAttempts: number;
+    private models: Record<
+        keyof S,
+        mongoose.Model<InferSchemaType<S[keyof S]>>
+    >;
+
+    constructor(options: MongoProviderOptions, schemas: S) {
         this.options = MongoProvider.validationOptions(options);
         this.connectionAttempts = 0;
+
+        // Create a model for each schema
+        this.models = schemaToModel(schemas);
+
         this.connect();
 
         this.initialise = this.initialise.bind(this);
