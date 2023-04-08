@@ -8,7 +8,7 @@ const GuildSchema = new mongoose.Schema(
             unique: true,
             immutable: true,
         },
-        prefix: { type: String, default: process.env.PREFIX },
+        prefix: { type: String, default: process.env.PREFIX, required: false },
     },
     { autoCreate: true, timestamps: true }
 );

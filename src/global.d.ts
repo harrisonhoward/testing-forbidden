@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import { MongoProvider } from "./provider/MongoProvider";
+import * as Schemas from "./provider/schemas";
+
 export interface Env {
     // Bot settings
     BOT_TOKEN: string;
@@ -19,5 +23,19 @@ declare global {
     namespace globalThis {
         function isNaN(value: unknown): boolean;
         function parseInt(value: unknown, radix?: number): number;
+    }
+}
+
+// Extend the SapphireClient to extends our database provider
+type BotProvider = MongoProvider<{ guilds: typeof Schemas.GuildSchema }>;
+declare module "@sapphire/framework" {
+    interface SapphireClient {
+        provider: BotProvider;
+    }
+}
+
+declare module "discord.js" {
+    interface Client {
+        provider: BotProvider;
     }
 }

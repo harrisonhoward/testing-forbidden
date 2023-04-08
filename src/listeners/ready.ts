@@ -1,6 +1,9 @@
 import { Listener } from "@sapphire/framework";
 import type { Client } from "discord.js";
 
+import { MongoProvider } from "../provider/MongoProvider";
+import * as Schemas from "../provider/schemas";
+
 export class ReadyListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
         super(context, {
@@ -12,13 +15,24 @@ export class ReadyListener extends Listener {
 
     public run(bot: Client) {
         if (!bot.user) {
-            this.container.logger.error(
-                "Ready: Bot has initialised with no user"
-            );
-            return;
+            throw new Error("Ready: Bot has initialised without a user");
         }
         this.container.logger.info(
             `Ready: Bot has initialised as ${bot.user.tag} (${bot.user.id})`
+        );
+
+        // Setup the provider
+        bot.provider = new MongoProvider(
+            {
+                hostname: process.env.DB_HOSTNAME,
+                port: process.env.DB_PORT,
+                database: process.env.DB_DATABASE,
+                auth: {
+                    username: process.env.DB_USERNAME,
+                    password: process.env.DB_PASSWORD,
+                },
+            },
+            { guilds: Schemas.GuildSchema }
         );
     }
 }
