@@ -5,7 +5,6 @@ import * as Schemas from "./provider/schemas";
 export interface Env {
     // Bot settings
     BOT_TOKEN: string;
-    PREFIX: string;
     // Database provider
     DB_HOSTNAME: string;
     DB_PORT: number;
@@ -13,6 +12,11 @@ export interface Env {
     DB_USERNAME: string;
     DB_PASSWORD: string;
 }
+
+// Extend the SapphireClient to extends our database provider
+type BotProvider = MongoProvider<{ guilds: typeof Schemas.GuildSchema }>;
+
+type GroupOptions = "basic";
 
 declare global {
     // Extend process.env to include our custom variables
@@ -26,11 +30,13 @@ declare global {
     }
 }
 
-// Extend the SapphireClient to extends our database provider
-type BotProvider = MongoProvider<{ guilds: typeof Schemas.GuildSchema }>;
 declare module "@sapphire/framework" {
     interface SapphireClient {
         provider: BotProvider;
+    }
+
+    interface CommandOptions {
+        group?: GroupOptions;
     }
 }
 

@@ -10,8 +10,8 @@ dotenv.config();
 // Setup our client
 const bot = new SapphireClient({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-    defaultPrefix: process.env.PREFIX,
     baseUserDirectory: __dirname + "/",
+    loadMessageCommandListeners: true,
 });
 
 bot.login(process.env.BOT_TOKEN);
