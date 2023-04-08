@@ -62,7 +62,10 @@ export class MongoProvider<
     public db: typeof mongoose | undefined;
 
     private connectionAttempts: number;
-    models: Record<keyof S, mongoose.Model<InferSchemaType<S[keyof S]>>>;
+    private models: Record<
+        keyof S,
+        mongoose.Model<InferSchemaType<S[keyof S]>>
+    >;
 
     constructor(options: MongoProviderOptions, schemas: S) {
         super();
