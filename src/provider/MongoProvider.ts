@@ -8,7 +8,7 @@ import { container } from "@sapphire/framework";
 import { EventEmitter } from "events";
 
 // Utils
-import { schemaToModel } from "../utils";
+import { schemaToModel } from "../utils/schemaToModel";
 
 export interface MongoProviderOptions {
     /**
