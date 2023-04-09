@@ -28,7 +28,7 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
             return this.ok();
         }
         return this.error({
-            message: "The database is not connected, unable to execute command",
+            identifier: "databaseConnection",
         });
     }
 }

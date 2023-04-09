@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { MongoProvider } from "./provider/MongoProvider";
 import * as Schemas from "./provider/schemas";
 
-export interface Env {
+interface Env {
     // Bot settings
     BOT_TOKEN: string;
     // Database provider
@@ -27,6 +27,10 @@ declare global {
     namespace globalThis {
         function isNaN(value: unknown): boolean;
         function parseInt(value: unknown, radix?: number): number;
+    }
+
+    interface Array {
+        includes(searchElement: unknown, fromIndex?: number): boolean;
     }
 }
 

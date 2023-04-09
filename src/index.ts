@@ -15,3 +15,11 @@ const bot = new SapphireClient({
 });
 
 bot.login(process.env.BOT_TOKEN);
+
+// GLOBAL TYPES FOR THE BOT
+
+export const CommandErrors = {
+    StaffOnly: "staffOnly",
+    DatabaseConnection: "databaseConnection",
+} as const;
+export type CommandErrors = typeof CommandErrors[keyof typeof CommandErrors];

@@ -1,4 +1,4 @@
-import { AllFlowsPrecondition, Piece, Result } from "@sapphire/framework";
+import { AllFlowsPrecondition, Piece } from "@sapphire/framework";
 import type {
     CommandInteraction,
     ContextMenuCommandInteraction,
@@ -35,8 +35,6 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
         if (["305488176267526147", "186683613440376833"].includes(userID)) {
             return this.ok();
         }
-        return this.error({
-            message: "This bot is currently locked to specific users only",
-        });
+        return this.error({ identifier: "staffOnly" });
     }
 }

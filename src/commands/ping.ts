@@ -27,8 +27,7 @@ export class PingCommand extends Command {
     public override async chatInputRun(
         interaction: Command.ChatInputCommandInteraction
     ) {
-        const output = await interaction.reply({
-            content: "Pinging...",
+        const output = await interaction.deferReply({
             fetchReply: true,
         });
 
