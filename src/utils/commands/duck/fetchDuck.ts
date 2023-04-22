@@ -1,10 +1,17 @@
-import { Command } from "@sapphire/framework";
-import { EmbedBuilder, type ButtonInteraction } from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    MessageComponentInteraction,
+} from "discord.js";
 
-import { isButtonInteration } from "../../isButtonInteraction";
+import { isMessageComponentInteraction } from "../../isMessageComponentInteraction";
 
+/**
+ * Fetches a random duck image from the random-d.uk API
+ * Will use the provided embed builder to send an error message if an error occurs
+ */
 export async function fetchDuck(
-    interaction: Command.ChatInputCommandInteraction | ButtonInteraction,
+    interaction: ChatInputCommandInteraction | MessageComponentInteraction,
     embed: EmbedBuilder
 ): Promise<string | void> {
     try {
@@ -15,7 +22,7 @@ export async function fetchDuck(
         embed //
             .setDescription("An unexepected error occurred")
             .addFields({ name: "Error", value: `\`\`\`${err}\`\`\`` });
-        if (isButtonInteration(interaction)) {
+        if (isMessageComponentInteraction(interaction)) {
             interaction.update({
                 content: "",
                 embeds: [embed],

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { MongoProvider } from "./provider/MongoProvider";
 import * as Schemas from "./provider/schemas";
 
+// Type for our environment variables
 interface Env {
     // Bot settings
     BOT_TOKEN: string;
@@ -13,41 +14,47 @@ interface Env {
     DB_PASSWORD: string;
 }
 
-// Extend the SapphireClient to extends our database provider
+// Create a type for our database provider
 type BotProvider = MongoProvider<{ guilds: typeof Schemas.GuildSchema }>;
 
+// Create a type for all of the group options in our commands
 type GroupOptions = "basic";
 
 declare global {
-    // Extend process.env to include our custom variables
     namespace NodeJS {
+        // Include out environment variables in process.env
         interface ProcessEnv extends Env {}
     }
-    // Reset types of isNaN and parseInt to accept unknown
     namespace globalThis {
+        // Resetting these types as they accept anything
         function isNaN(value: unknown): boolean;
         function parseInt(value: unknown, radix?: number): number;
     }
 
     interface Array {
+        // Update the includes function in arrays to be more generic
         includes(searchElement: unknown, fromIndex?: number): boolean;
     }
 
+    // New global type that is a conditional return type
     type ReturnTypeOr<T, K> = T extends () => infer R ? R : K;
 }
 
 declare module "@sapphire/framework" {
     interface SapphireClient {
+        // Apply our provider to the SapphireClient
         provider: BotProvider;
     }
 
     interface CommandOptions {
+        // Add a new group option to the command options
         group?: GroupOptions;
     }
 }
 
 declare module "discord.js" {
     interface Client {
+        // Apply our provider to the Discord.js Client
         provider: BotProvider;
     }
 }

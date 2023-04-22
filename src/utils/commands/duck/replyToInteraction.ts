@@ -1,24 +1,29 @@
-import { Command } from "@sapphire/framework";
 import {
+    ChatInputCommandInteraction,
     EmbedBuilder,
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
-    ButtonInteraction,
+    MessageComponentInteraction,
 } from "discord.js";
 
-// Utilities
+// Utils
 import { fetchDuck } from "./fetchDuck";
-import { isButtonInteration } from "../../isButtonInteraction";
+import { isMessageComponentInteraction } from "../../isMessageComponentInteraction";
 
 // Button ID
 import { duckRefreshButtonID } from "../../../commands/duck";
 
 export async function replyToInteraction(
-    interaction: Command.ChatInputCommandInteraction | ButtonInteraction
+    interaction: ChatInputCommandInteraction | MessageComponentInteraction
 ) {
-    const isButtonInteraction = isButtonInteration(interaction);
-    if (!isButtonInteraction && !interaction.deferred && !interaction.replied) {
+    const fromMessageComponent = isMessageComponentInteraction(interaction);
+    // Defer the interaction if it hasn't already been (command interaction)
+    if (
+        !fromMessageComponent &&
+        !interaction.deferred &&
+        !interaction.replied
+    ) {
         await interaction.deferReply();
     }
 
@@ -45,19 +50,16 @@ export async function replyToInteraction(
     const duck = await fetchDuck(interaction, embed);
     if (typeof duck === "string") {
         embed.setImage(duck);
-        // A button interaction caused this function to be called
-        if (isButtonInteraction) {
-            return interaction.update({
-                content: "",
-                embeds: [embed],
-                components: [row],
-            });
-        }
-        // A command interaction cause this function to be called
-        return interaction.editReply({
+        const responseObj = {
             content: "",
             embeds: [embed],
             components: [row],
-        });
+        };
+        // A button interaction caused this function to be called
+        if (fromMessageComponent) {
+            return interaction.update(responseObj);
+        }
+        // A command interaction cause this function to be called
+        return interaction.editReply(responseObj);
     }
 }

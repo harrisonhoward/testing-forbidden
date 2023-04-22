@@ -12,6 +12,10 @@ import {
     databaseConnectionFailure,
 } from "./DatabaseConnection";
 
+/**
+ * Generic function that is executed when a precondition fails
+ * If you provide a callback it will use that as the return type
+ */
 export const preconditionFailure = <T extends Function | undefined>(
     content: string,
     interaction: CommandInteraction | MessageComponentInteraction,
@@ -33,6 +37,9 @@ export const preconditionFailure = <T extends Function | undefined>(
     return callback ? callback() : reply;
 };
 
+/**
+ * Will execute onOk if all global preconditions are met otherwise it will execute onError
+ */
 export const passGlobalConditions = <S extends () => any, F extends () => any>(
     interaction: MessageComponentInteraction,
     onOk: S,

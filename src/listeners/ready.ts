@@ -21,7 +21,8 @@ export class ReadyListener extends Listener {
             `Ready: Bot has initialised as ${bot.user.tag} (${bot.user.id})`
         );
 
-        // Setup the provider
+        // Once the bot is ready attach a new provider instance
+        // This doesn't mean the database is connected yet
         bot.provider = new MongoProvider(
             {
                 hostname: process.env.DB_HOSTNAME,

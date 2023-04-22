@@ -6,9 +6,15 @@ import type {
 
 import { preconditionFailure } from "..";
 
+/**
+ * Based on the provided client is capable of determining if the database is connected
+ */
 export const isDatabaseConnected = (client: Client): boolean =>
     client.provider.isConnected();
 
+/**
+ * Uses the generic function preconditionFailure when the database connection precondition fails
+ */
 export const databaseConnectionFailure = <T extends Function | undefined>(
     interaction: CommandInteraction | MessageComponentInteraction,
     callback?: T

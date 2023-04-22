@@ -196,6 +196,9 @@ export class MongoProvider<
         this.connectionAttempts = 0;
     }
 
+    /**
+     * Will resolve once the database has been connected
+     */
     public async waitForConnection(callback?: Function): Promise<void> {
         return new Promise((resolve) => {
             this.once("connected", () => {
@@ -261,6 +264,11 @@ export class MongoProvider<
         return model?.collection;
     }
 
+    /**
+     * Insert a single document into the database
+     * @param collectionName This refers to the name of the schema provided in the constructor
+     * @param document The contents of the document to insert
+     */
     public async insertDocument<K extends keyof S>(
         collectionName: K,
         document: Omit<InferSchemaType<S[K]>, "createdAt" | "updatedAt">,
@@ -285,6 +293,11 @@ export class MongoProvider<
         }
     }
 
+    /**
+     * Find a list of documents from the database
+     * @param collectionName This refers to the name of the schema provided in the constructor
+     * @param filter The filter to apply to the query
+     */
     public async findDocuments<K extends keyof S>(
         collectionName: K,
         filter: FilterQuery<InferSchemaType<S[K]>>,
@@ -315,6 +328,11 @@ export class MongoProvider<
         }
     }
 
+    /**
+     * Get a single document from the database
+     * @param collectionName This refers to the name of the schema provided in the constructor
+     * @param filter The filter to apply to the query
+     */
     public async getDocument<K extends keyof S>(
         collectionName: K,
         filter: FilterQuery<InferSchemaType<S[K]>>,
@@ -339,6 +357,12 @@ export class MongoProvider<
         }
     }
 
+    /**
+     * Update a single document in the database (Options to create the document if it doesn't exist)
+     * @param collectionName This refers to the name of the schema provided in the constructor
+     * @param filter The filter to apply to the query
+     * @param update The update query to be applied to the found document otherwise the query for the insert
+     */
     public async updateDocument<K extends keyof S>(
         collectionName: K,
         filter: FilterQuery<InferSchemaType<S[K]>>,
@@ -377,6 +401,11 @@ export class MongoProvider<
         }
     }
 
+    /**
+     * Delete a single document from the database
+     * @param collectionName This refers to the name of the schema provided in the constructor
+     * @param filter The filter to apply to the query
+     */
     public async deleteDocument<K extends keyof S>(
         collectionName: K,
         filter: FilterQuery<InferSchemaType<S[K]>>,
@@ -400,6 +429,9 @@ export class MongoProvider<
         return false;
     }
 
+    /**
+     * Will validate the provided options to ensure they are valid for the MongoProvider constructor
+     */
     static validationOptions(options: MongoProviderOptions): MongoConnection {
         // Validate hostname is a string
         let hostname = "localhost";
