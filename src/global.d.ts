@@ -32,6 +32,8 @@ declare global {
     interface Array {
         includes(searchElement: unknown, fromIndex?: number): boolean;
     }
+
+    type ReturnTypeOr<T, K> = T extends () => infer R ? R : K;
 }
 
 declare module "@sapphire/framework" {
