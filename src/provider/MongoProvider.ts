@@ -209,7 +209,7 @@ export class MongoProvider<
 
     private getModel<K extends keyof typeof this.models>(
         modelName: K
-    ): typeof this.models[K] | void {
+    ): (typeof this.models)[K] | void {
         // Ensure that model exists
         if (!this.models[modelName]) {
             container.logger.warn(

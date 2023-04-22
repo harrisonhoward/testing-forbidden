@@ -8,8 +8,9 @@ import { type ButtonInteraction } from "discord.js";
 // Button ID
 import { duckRefreshButtonID } from "../commands/duck";
 
-// Method
+// Util
 import { replyToInteraction } from "../utils/commands/duck/replyToInteraction";
+import { passGlobalConditions } from "../utils/preconditions";
 
 export class DuckRefreshButton extends InteractionHandler {
     public constructor(ctx: PieceContext, options: InteractionHandler.Options) {
@@ -22,7 +23,7 @@ export class DuckRefreshButton extends InteractionHandler {
 
     public override parse(interaction: ButtonInteraction) {
         if (interaction.customId !== duckRefreshButtonID) return this.none();
-        return this.some();
+        return passGlobalConditions(interaction, this.some, this.none);
     }
 
     public async run(interaction: ButtonInteraction) {

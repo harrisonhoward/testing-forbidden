@@ -1,5 +1,8 @@
 import { AllFlowsPrecondition, Piece } from "@sapphire/framework";
 
+// Util
+import { isDatabaseConnected } from "../../utils/preconditions/DatabaseConnection";
+
 export class StaffOnlyPrecondition extends AllFlowsPrecondition {
     public constructor(
         context: Piece.Context,
@@ -12,23 +15,21 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
     }
 
     public override async messageRun() {
-        return this.databaseConnected();
+        return this.check();
     }
 
     public override async chatInputRun() {
-        return this.databaseConnected();
+        return this.check();
     }
 
     public override async contextMenuRun() {
-        return this.databaseConnected();
+        return this.check();
     }
 
-    private async databaseConnected() {
-        if (this.container.client.provider.isConnected()) {
+    private async check() {
+        if (isDatabaseConnected(this.container.client)) {
             return this.ok();
         }
-        return this.error({
-            identifier: "databaseConnection",
-        });
+        return this.error({ identifier: "databaseConnection" });
     }
 }

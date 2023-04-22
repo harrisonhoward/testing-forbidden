@@ -5,6 +5,9 @@ import type {
     Message,
 } from "discord.js";
 
+// Util
+import { isStaff } from "../../utils/preconditions/StaffOnly";
+
 export class StaffOnlyPrecondition extends AllFlowsPrecondition {
     public constructor(
         context: Piece.Context,
@@ -17,22 +20,21 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
     }
 
     public override async messageRun(message: Message) {
-        return this.checkStaff(message.author.id);
+        return this.check(message.author.id);
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
-        return this.checkStaff(interaction.user.id);
+        return this.check(interaction.user.id);
     }
 
     public override async contextMenuRun(
         interaction: ContextMenuCommandInteraction
     ) {
-        return this.checkStaff(interaction.user.id);
+        return this.check(interaction.user.id);
     }
 
-    private async checkStaff(userID: string) {
-        // TODO: Improve detection at the moment hard coding the IDs
-        if (["305488176267526147", "186683613440376833"].includes(userID)) {
+    private check(userID: string) {
+        if (isStaff(userID)) {
             return this.ok();
         }
         return this.error({ identifier: "staffOnly" });

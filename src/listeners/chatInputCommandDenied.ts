@@ -7,6 +7,10 @@ import {
 import { ChatInputCommandInteraction } from "discord.js";
 import { CommandErrors } from "../";
 
+// Util
+import { staffOnlyFailure } from "../utils/preconditions/StaffOnly";
+import { databaseConnectionFailure } from "../utils/preconditions/DatabaseConnection";
+
 export class ChatInputCommandDenied extends Listener<
     typeof Events.ChatInputCommandDenied
 > {
@@ -30,29 +34,10 @@ export class ChatInputCommandDenied extends Listener<
     }
 
     private staffOnly(interaction: ChatInputCommandInteraction) {
-        const content = "Only staff members are allowed to use this bot";
-        if (interaction.deferred || interaction.replied) {
-            return interaction.editReply({
-                content,
-            });
-        }
-        return interaction.reply({
-            content,
-            ephemeral: true,
-        });
+        return staffOnlyFailure(interaction);
     }
 
     private databaseConnection(interaction: ChatInputCommandInteraction) {
-        const content =
-            "The database is currently unavailable, unable to process your command";
-        if (interaction.deferred || interaction.replied) {
-            return interaction.editReply({
-                content,
-            });
-        }
-        return interaction.reply({
-            content,
-            ephemeral: true,
-        });
+        return databaseConnectionFailure(interaction);
     }
 }
