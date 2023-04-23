@@ -1,9 +1,15 @@
 import { AllFlowsPrecondition, Piece } from "@sapphire/framework";
+import {
+    CommandInteraction,
+    ContextMenuCommandInteraction,
+    Message,
+    MessageComponentInteraction,
+} from "discord.js";
 
 // Util
-import { isDatabaseConnected } from "../../utils/preconditions/DatabaseConnection";
+import { preconditionFailure } from "../../utils/preconditions";
 
-export class StaffOnlyPrecondition extends AllFlowsPrecondition {
+export class DatabaseConnectionPrecondition extends AllFlowsPrecondition {
     public constructor(
         context: Piece.Context,
         options: AllFlowsPrecondition.Options
@@ -14,22 +20,50 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
         });
     }
 
-    public override async messageRun() {
-        return this.check();
+    public override async messageRun(message: Message) {
+        return this.check(message);
     }
 
-    public override async chatInputRun() {
-        return this.check();
+    public override async chatInputRun(interaction: CommandInteraction) {
+        return this.check(interaction);
     }
 
-    public override async contextMenuRun() {
-        return this.check();
+    public override async contextMenuRun(
+        interaction: ContextMenuCommandInteraction
+    ) {
+        return this.check(interaction);
     }
 
-    private async check() {
-        if (isDatabaseConnected(this.container.client)) {
+    private async check(
+        interaction:
+            | Message
+            | CommandInteraction
+            | ContextMenuCommandInteraction
+    ) {
+        if (DatabaseConnectionPrecondition.isValid(interaction)) {
             return this.ok();
         }
-        return this.error({ identifier: "databaseConnection" });
+        return this.error({ identifier: "DatabaseConnection" });
+    }
+
+    public static isValid(
+        interaction:
+            | Message
+            | CommandInteraction
+            | ContextMenuCommandInteraction
+            | MessageComponentInteraction
+    ) {
+        return interaction.client.provider.isConnected();
+    }
+
+    public static hasFailed<T extends Function | undefined>(
+        interaction: CommandInteraction | MessageComponentInteraction,
+        callback?: T
+    ) {
+        return preconditionFailure(
+            "The database is currently unavailable, unable to process your command",
+            interaction,
+            callback
+        );
     }
 }
