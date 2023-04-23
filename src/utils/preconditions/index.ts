@@ -51,7 +51,10 @@ export const preconditionFailure = <T extends Function | undefined>(
 /**
  * Will execute onOk if all global preconditions are met otherwise it will execute onError
  */
-export const passGlobalConditions = <S extends () => any, F extends () => any>(
+export const passGlobalPreconditions = <
+    S extends () => any,
+    F extends () => any
+>(
     interaction: MessageComponentInteraction,
     onOk: S,
     onError: F
