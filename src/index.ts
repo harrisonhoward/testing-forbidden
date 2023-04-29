@@ -1,6 +1,9 @@
 import { SapphireClient } from "@sapphire/framework";
 import { GatewayIntentBits } from "discord.js";
 
+// Interaction Conditions Handler
+import { InteractionConditions } from "./bot-handler/InteractionConditions";
+
 import "@sapphire/plugin-logger/register";
 
 // Setup dotenv for our '.env' file with our token under 'BOT_TOKEN
@@ -13,6 +16,9 @@ const bot = new SapphireClient({
     baseUserDirectory: __dirname + "/",
     loadMessageCommandListeners: true,
 });
+
+// Setup our interactions handler
+bot.interactionConditions = new InteractionConditions();
 
 bot.login(process.env.BOT_TOKEN);
 

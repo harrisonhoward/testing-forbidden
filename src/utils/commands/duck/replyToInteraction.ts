@@ -56,7 +56,7 @@ export async function replyToInteraction(
             components: [row],
         };
         // A button interaction caused this function to be called
-        if (fromMessageComponent) {
+        if (fromMessageComponent && !interaction.replied) {
             return interaction.update(responseObj);
         }
         // A command interaction cause this function to be called

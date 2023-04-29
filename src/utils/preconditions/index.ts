@@ -48,6 +48,9 @@ export const preconditionFailure = <T extends Function | undefined>(
     return callback ? callback() : reply;
 };
 
+// TODO: passGlobalPreconditions can actually be handled on InteractionConditions
+// TODO: Add type for a specific preconditon "global" "manual" and apply this to the runPrecondiions function
+
 /**
  * Will execute onOk if all global preconditions are met otherwise it will execute onError
  */
@@ -55,40 +58,25 @@ export const passGlobalPreconditions = <
     S extends () => any,
     F extends () => any
 >(
-    interaction: MessageComponentInteraction,
-    onOk: S,
-    onError: F
-): Promise<ReturnType<S | F>> => {
-    return new Promise(async (resolve, reject) => {
-        const preconditonsToCheck: GlobalPrecondition[] = [];
-        // Loop through all of the preconditions in the store
-        // For every precondition that has a position is determined to be global
-        // We dynamically import the precondition and add it to an array to be checked
-        for (const precondition of interaction.client.stores
-            .get("preconditions")
-            .values()) {
-            // Determine if the precondition is global
-            if (typeof precondition.position === "number") {
-                try {
-                    // Dynamically import the precondition
-                    const module = await import(precondition.location.full);
-                    if (module[`${precondition.name}Precondition`]) {
-                        preconditonsToCheck.push(
-                            module[`${precondition.name}Precondition`]
-                        );
-                    }
-                } catch (err) {
-                    reject(err);
-                }
-            }
-        }
-        for (const precondition of preconditonsToCheck) {
-            // Keep in mind if a global precondition doesn't have these functions it won't work
-            if (precondition.isValid && !precondition.isValid(interaction)) {
-                resolve(precondition.hasFailed(interaction, onError));
+    interaction: MessageComponentInteraction
+) => {
+    const interactionConditions = interaction.client.interactionConditions;
+    for (const precondition of interactionConditions.preconditions) {
+        if (precondition.isValid && precondition.hasFailed) {
+            const result = precondition.isValid(interaction);
+            if (!result) {
+                precondition.hasFailed(interaction);
+
+                interactionConditions.handleInteraction(interaction, false);
                 return;
             }
         }
-        resolve(onOk());
-    });
+    }
+    interactionConditions.handleInteraction(interaction, true);
 };
+
+export const interactionIsValid = (
+    interaction: MessageComponentInteraction
+): boolean =>
+    interaction.client.interactionConditions.interactions[interaction.id]
+        .isValid;

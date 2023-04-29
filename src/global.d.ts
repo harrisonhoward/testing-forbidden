@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
+
+// Provider
 import { MongoProvider } from "./provider/MongoProvider";
 import * as Schemas from "./provider/schemas";
+
+// Interaction Conditions Handler
+import { InteractionConditions } from "./bot-handler/InteractionConditions";
 
 // Type for our environment variables
 interface Env {
@@ -44,6 +49,8 @@ declare module "@sapphire/framework" {
     interface SapphireClient {
         // Apply our provider to the SapphireClient
         provider: BotProvider;
+        // Apply our interaction conditions handler to the SapphireClient
+        interactionConditions: InteractionConditions;
     }
 
     interface CommandOptions {
@@ -56,5 +63,7 @@ declare module "discord.js" {
     interface Client {
         // Apply our provider to the Discord.js Client
         provider: BotProvider;
+        // Apply our interaction conditions handler to the Discord.js Client
+        interactionConditions: InteractionConditions;
     }
 }

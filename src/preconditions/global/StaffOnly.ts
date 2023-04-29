@@ -19,6 +19,9 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
             ...options,
             position: 11,
         });
+        this.container.client.interactionConditions.addPrecondition(
+            StaffOnlyPrecondition
+        );
     }
 
     public override async messageRun(message: Message) {
@@ -55,7 +58,7 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
             | MessageComponentInteraction
     ) {
         // TODO: Improve detection at the moment hard coding the IDs
-        return ["305488176267526147", "186683613440376833"].includes(
+        return ["_305488176267526147", "186683613440376833"].includes(
             isMessage(interaction) ? interaction.author.id : interaction.user.id
         );
     }

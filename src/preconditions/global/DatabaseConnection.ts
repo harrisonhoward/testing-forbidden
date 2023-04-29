@@ -18,6 +18,9 @@ export class DatabaseConnectionPrecondition extends AllFlowsPrecondition {
             ...options,
             position: 12,
         });
+        this.container.client.interactionConditions.addPrecondition(
+            DatabaseConnectionPrecondition
+        );
     }
 
     public override async messageRun(message: Message) {

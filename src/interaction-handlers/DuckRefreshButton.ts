@@ -10,7 +10,7 @@ import { duckRefreshButtonID } from "../commands/duck";
 
 // Util
 import { replyToInteraction } from "../utils/commands/duck/replyToInteraction";
-import { passGlobalPreconditions } from "../utils/preconditions";
+import { interactionIsValid } from "../utils/preconditions";
 
 export class DuckRefreshButton extends InteractionHandler {
     public constructor(ctx: PieceContext, options: InteractionHandler.Options) {
@@ -22,8 +22,12 @@ export class DuckRefreshButton extends InteractionHandler {
     }
 
     public override parse(interaction: ButtonInteraction) {
-        if (interaction.customId !== duckRefreshButtonID) return this.none();
-        return passGlobalPreconditions(interaction, this.some, this.none);
+        if (
+            interaction.customId !== duckRefreshButtonID ||
+            !interactionIsValid(interaction)
+        )
+            return this.none();
+        return this.some();
     }
 
     public async run(interaction: ButtonInteraction) {
