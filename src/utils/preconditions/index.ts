@@ -54,29 +54,18 @@ export const preconditionFailure = <T extends Function | undefined>(
 /**
  * Will execute onOk if all global preconditions are met otherwise it will execute onError
  */
-export const passGlobalPreconditions = <
-    S extends () => any,
-    F extends () => any
->(
+export const passGlobalPreconditions = (
     interaction: MessageComponentInteraction
-) => {
+): boolean => {
     const interactionConditions = interaction.client.interactionConditions;
     for (const precondition of interactionConditions.preconditions) {
         if (precondition.isValid && precondition.hasFailed) {
             const result = precondition.isValid(interaction);
             if (!result) {
                 precondition.hasFailed(interaction);
-
-                interactionConditions.handleInteraction(interaction, false);
-                return;
+                return false;
             }
         }
     }
-    interactionConditions.handleInteraction(interaction, true);
+    return true;
 };
-
-export const interactionIsValid = (
-    interaction: MessageComponentInteraction
-): boolean =>
-    interaction.client.interactionConditions.interactions[interaction.id]
-        .isValid;

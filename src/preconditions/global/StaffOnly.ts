@@ -58,7 +58,7 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
             | MessageComponentInteraction
     ) {
         // TODO: Improve detection at the moment hard coding the IDs
-        return ["_305488176267526147", "186683613440376833"].includes(
+        return ["305488176267526147", "186683613440376833"].includes(
             isMessage(interaction) ? interaction.author.id : interaction.user.id
         );
     }
