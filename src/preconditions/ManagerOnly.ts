@@ -8,16 +8,17 @@ import type {
 import {
     Precondition,
     PreconditionOptions,
-} from "../../utils/preconditions/Precondition";
+} from "../utils/preconditions/Precondition";
 
-export class DatabaseConnectionPrecondition extends Precondition {
+// Util
+import { isMessage } from "../utils/isMessage";
+
+export class ManagerOnlyPrecondition extends Precondition {
     public constructor(context: Piece.Context, options: PreconditionOptions) {
         super(context, {
             ...options,
-            name: "DatabaseConnection",
-            onFailure:
-                "The database is currently unavailable, unable to process your command",
-            position: 12,
+            name: "ManagerOnly",
+            onFailure: "This command is limited to the Managers only.",
         });
     }
 
@@ -28,6 +29,9 @@ export class DatabaseConnectionPrecondition extends Precondition {
             | ContextMenuCommandInteraction
             | MessageComponentInteraction
     ) {
-        return interaction.client.provider.isConnected();
+        // TODO: Improve detection at the moment hard coding the IDs
+        return ["305488176267526147", "186683613440376833"].includes(
+            isMessage(interaction) ? interaction.author.id : interaction.user.id
+        );
     }
 }

@@ -22,9 +22,6 @@ interface Env {
 // Create a type for our database provider
 type BotProvider = MongoProvider<{ guilds: typeof Schemas.GuildSchema }>;
 
-// Create a type for all of the group options in our commands
-type GroupOptions = "basic";
-
 declare global {
     namespace NodeJS {
         // Include out environment variables in process.env
@@ -53,9 +50,8 @@ declare module "@sapphire/framework" {
         interactionConditions: InteractionConditions;
     }
 
-    interface CommandOptions {
-        // Add a new group option to the command options
-        group?: GroupOptions;
+    interface Preconditions {
+        ManagerOnly: never;
     }
 }
 

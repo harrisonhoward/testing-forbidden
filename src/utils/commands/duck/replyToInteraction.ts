@@ -12,7 +12,7 @@ import { fetchDuck } from "./fetchDuck";
 import { isMessageComponentInteraction } from "../../isMessageComponentInteraction";
 
 // Button ID
-import { duckRefreshButtonID } from "../../../commands/duck";
+import { duckRefreshButtonID } from "../../../commands/Basic/duck";
 
 export async function replyToInteraction(
     interaction: ChatInputCommandInteraction | MessageComponentInteraction

@@ -2,37 +2,35 @@ import { AllFlowsPrecondition, Piece } from "@sapphire/framework";
 import {
     CommandInteraction,
     ContextMenuCommandInteraction,
-    InteractionResponse,
     Message,
     MessageComponentInteraction,
 } from "discord.js";
-import { InteractionConditionType } from "./InteractionConditions";
+import { Condition, InteractionConditionType } from "./InteractionConditions";
+import { isMessage } from "../isMessage";
+import { renderFailureEmbed } from "./FailureEmbed";
 
 export interface PreconditionOptions extends AllFlowsPrecondition.Options {
-    id: string;
-    failedMessage: string;
+    onFailure: string;
 }
 
 export abstract class Precondition extends AllFlowsPrecondition {
-    public id: string;
-    public failedMessage: string;
+    public onFailure: PreconditionOptions["onFailure"];
 
     constructor(context: Piece.Context, options: PreconditionOptions) {
         super(context, options);
-        this.id = options.id;
-        this.failedMessage = options.failedMessage;
+        this.onFailure = options.onFailure;
 
         // If options contains order then we know the condition type;
         if (typeof options.position === "number") {
             this.container.client.interactionConditions.addPrecondition({
-                key: this.id,
+                key: this.name,
                 type: InteractionConditionType.Global,
                 precondition: this,
                 order: options.position,
             });
         } else {
             this.container.client.interactionConditions.addPrecondition({
-                key: this.id,
+                key: this.name,
                 type: InteractionConditionType.Manual,
                 precondition: this,
             });
@@ -47,25 +45,25 @@ export abstract class Precondition extends AllFlowsPrecondition {
             | MessageComponentInteraction
     ): boolean;
 
-    public hasFailed<T extends Function | undefined>(
-        interaction: CommandInteraction | MessageComponentInteraction,
-        callback?: T
-    ): ReturnTypeOr<
-        T,
-        Promise<Message<boolean> | InteractionResponse<boolean>>
-    > {
+    public hasFailed: Condition["hasFailed"] = (interaction, callback?) => {
         let reply;
-        if (interaction.deferred || interaction.replied) {
-            reply = interaction.editReply({
-                content: this.failedMessage,
+        if (isMessage(interaction)) {
+            reply = interaction.reply({
+                embeds: [renderFailureEmbed(interaction, this.onFailure)],
+            });
+        } else {
+            if (interaction.deferred || interaction.replied) {
+                reply = interaction.editReply({
+                    content: this.onFailure,
+                });
+            }
+            reply = interaction.reply({
+                content: this.onFailure,
+                ephemeral: true,
             });
         }
-        reply = interaction.reply({
-            content: this.failedMessage,
-            ephemeral: true,
-        });
         return callback ? callback() : reply;
-    }
+    };
 
     private async check(
         interaction:
@@ -76,7 +74,7 @@ export abstract class Precondition extends AllFlowsPrecondition {
         if (this.isValid(interaction)) {
             return this.ok();
         }
-        return this.error({ identifier: this.id });
+        return this.error({ identifier: this.name });
     }
 
     public override async messageRun(message: Message) {

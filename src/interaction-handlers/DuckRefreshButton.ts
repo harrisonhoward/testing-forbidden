@@ -6,7 +6,7 @@ import {
 } from "../utils/preconditions/InteractionHandler";
 
 // Button ID
-import { duckRefreshButtonID } from "../commands/duck";
+import { duckRefreshButtonID } from "../commands/Basic/duck";
 
 // Util
 import { replyToInteraction } from "../utils/commands/duck/replyToInteraction";

@@ -15,7 +15,7 @@ export interface Condition {
             | MessageComponentInteraction
     ): boolean;
     hasFailed<T extends Function | undefined>(
-        interaction: CommandInteraction | MessageComponentInteraction,
+        interaction: CommandInteraction | MessageComponentInteraction | Message,
         callback?: T
     ): ReturnTypeOr<
         T,

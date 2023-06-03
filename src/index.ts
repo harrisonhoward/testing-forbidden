@@ -12,9 +12,16 @@ dotenv.config();
 
 // Setup our client
 const bot = new SapphireClient({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+    intents: [
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+    ],
     baseUserDirectory: __dirname + "/",
     loadMessageCommandListeners: true,
+    defaultPrefix: "f>",
+    disableMentionPrefix: true,
+    caseInsensitivePrefixes: true,
 });
 
 // Setup our interactions handler

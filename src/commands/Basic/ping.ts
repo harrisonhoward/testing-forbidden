@@ -7,7 +7,7 @@ export class PingCommand extends Command {
         super(context, {
             ...options,
             name: "ping",
-            group: "basic",
+            fullCategory: ["Basic"],
             description: "Will return the current bot latency",
             requiredClientPermissions: ["SendMessages", "EmbedLinks"],
         });

@@ -1,10 +1,9 @@
 import { Piece } from "@sapphire/framework";
-import {
-    InteractionType,
-    type CommandInteraction,
-    type ContextMenuCommandInteraction,
-    type Message,
-    type MessageComponentInteraction,
+import type {
+    CommandInteraction,
+    ContextMenuCommandInteraction,
+    Message,
+    MessageComponentInteraction,
 } from "discord.js";
 import {
     Precondition,
@@ -18,8 +17,8 @@ export class StaffOnlyPrecondition extends Precondition {
     public constructor(context: Piece.Context, options: PreconditionOptions) {
         super(context, {
             ...options,
-            id: "StaffOnly",
-            failedMessage: "Only staff members are allowed to use this bot",
+            name: "StaffOnly",
+            onFailure: "Only staff members are allowed to use this bot",
             position: 11,
         });
     }
