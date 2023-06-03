@@ -5,7 +5,7 @@ import { MongoProvider } from "./provider/MongoProvider";
 import * as Schemas from "./provider/schemas";
 
 // Interaction Conditions Handler
-import { InteractionConditions } from "./bot-handler/InteractionConditions";
+import { InteractionConditions } from "./utils/preconditions/InteractionConditions";
 
 // Type for our environment variables
 interface Env {

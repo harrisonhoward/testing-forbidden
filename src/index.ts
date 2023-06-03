@@ -2,7 +2,7 @@ import { SapphireClient } from "@sapphire/framework";
 import { GatewayIntentBits } from "discord.js";
 
 // Interaction Conditions Handler
-import { InteractionConditions } from "./bot-handler/InteractionConditions";
+import { InteractionConditions } from "./utils/preconditions/InteractionConditions";
 
 import "@sapphire/plugin-logger/register";
 
@@ -21,11 +21,3 @@ const bot = new SapphireClient({
 bot.interactionConditions = new InteractionConditions();
 
 bot.login(process.env.BOT_TOKEN);
-
-// GLOBAL TYPES FOR THE BOT
-
-export const CommandErrors = {
-    StaffOnly: "StaffOnly",
-    DatabaseConnection: "DatabaseConnection",
-} as const;
-export type CommandErrors = (typeof CommandErrors)[keyof typeof CommandErrors];

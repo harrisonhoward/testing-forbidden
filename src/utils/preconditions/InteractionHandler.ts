@@ -1,36 +1,34 @@
 import {
     InteractionHandler as SF_InteractionHandler,
-    InteractionHandlerTypes,
     PieceContext,
     Option,
 } from "@sapphire/framework";
 import { Awaitable } from "@sapphire/utilities";
 import type { Interaction, ButtonInteraction } from "discord.js";
 
-// Util
-import { passGlobalPreconditions } from "../preconditions";
-
 export interface InteractionHandlerOptions
     extends SF_InteractionHandler.Options {
     id: string;
+    preconditions?: string[];
 }
 
 export abstract class InteractionHandler extends SF_InteractionHandler {
     public id: string;
+    public preconditions?: string[];
 
     public constructor(ctx: PieceContext, options: InteractionHandlerOptions) {
-        super(ctx, {
-            ...options,
-            name: "DuckRefreshButton",
-            interactionHandlerType: InteractionHandlerTypes.Button,
-        });
+        super(ctx, options);
         this.id = options.id;
+        this.preconditions = options.preconditions;
     }
 
     public override parse(interaction: ButtonInteraction) {
         if (
             interaction.customId !== this.id ||
-            !passGlobalPreconditions(interaction)
+            !this.container.client.interactionConditions.passPreconditions(
+                interaction,
+                this.preconditions
+            )
         )
             return this.none();
         return this.validate(interaction);

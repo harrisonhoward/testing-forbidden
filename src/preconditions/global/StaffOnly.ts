@@ -1,56 +1,30 @@
-import { AllFlowsPrecondition, Piece } from "@sapphire/framework";
-import type {
-    CommandInteraction,
-    ContextMenuCommandInteraction,
-    Message,
-    MessageComponentInteraction,
+import { Piece } from "@sapphire/framework";
+import {
+    InteractionType,
+    type CommandInteraction,
+    type ContextMenuCommandInteraction,
+    type Message,
+    type MessageComponentInteraction,
 } from "discord.js";
+import {
+    Precondition,
+    PreconditionOptions,
+} from "../../utils/preconditions/Precondition";
 
 // Util
-import { preconditionFailure } from "../../utils/preconditions";
 import { isMessage } from "../../utils/isMessage";
 
-export class StaffOnlyPrecondition extends AllFlowsPrecondition {
-    public constructor(
-        context: Piece.Context,
-        options: AllFlowsPrecondition.Options
-    ) {
+export class StaffOnlyPrecondition extends Precondition {
+    public constructor(context: Piece.Context, options: PreconditionOptions) {
         super(context, {
             ...options,
+            id: "StaffOnly",
+            failedMessage: "Only staff members are allowed to use this bot",
             position: 11,
         });
-        this.container.client.interactionConditions.addPrecondition(
-            StaffOnlyPrecondition
-        );
     }
 
-    public override async messageRun(message: Message) {
-        return this.check(message);
-    }
-
-    public override async chatInputRun(interaction: CommandInteraction) {
-        return this.check(interaction);
-    }
-
-    public override async contextMenuRun(
-        interaction: ContextMenuCommandInteraction
-    ) {
-        return this.check(interaction);
-    }
-
-    private check(
-        interaction:
-            | Message
-            | CommandInteraction
-            | ContextMenuCommandInteraction
-    ) {
-        if (StaffOnlyPrecondition.isValid(interaction)) {
-            return this.ok();
-        }
-        return this.error({ identifier: "StaffOnly" });
-    }
-
-    public static isValid(
+    public override isValid(
         interaction:
             | Message
             | CommandInteraction
@@ -60,17 +34,6 @@ export class StaffOnlyPrecondition extends AllFlowsPrecondition {
         // TODO: Improve detection at the moment hard coding the IDs
         return ["305488176267526147", "186683613440376833"].includes(
             isMessage(interaction) ? interaction.author.id : interaction.user.id
-        );
-    }
-
-    public static hasFailed<T extends Function | undefined>(
-        interaction: CommandInteraction | MessageComponentInteraction,
-        callback?: T
-    ) {
-        return preconditionFailure(
-            "Only staff members are allowed to use this bot",
-            interaction,
-            callback
         );
     }
 }
