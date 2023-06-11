@@ -6,7 +6,7 @@ export const renderFailureEmbed = (
 ): EmbedBuilder =>
     new EmbedBuilder() //
         .setColor(0x2095ab)
-        .setTimestamp(new Date())
+        .setTimestamp()
         .setTitle("Command Failure")
         .setDescription(content)
         .setAuthor({

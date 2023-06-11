@@ -28,20 +28,24 @@ export enum InteractionConditionType {
     Manual = "manual",
 }
 
-export interface GlobalInteractionCondition {
+export interface DefaultInteractionCondition {
     key: string;
-    type: InteractionConditionType.Global;
+    type: InteractionConditionType;
     precondition: Condition;
+}
+
+export interface GlobalInteractionCondition
+    extends DefaultInteractionCondition {
+    type: InteractionConditionType.Global;
     /**
      * Global preconditions require an order so they are executed in that specific order
      */
     order: number;
 }
 
-export interface ManualInteractionCondition {
-    key: string;
+export interface ManualInteractionCondition
+    extends DefaultInteractionCondition {
     type: InteractionConditionType.Manual;
-    precondition: Condition;
 }
 
 export type InteractionCondition =

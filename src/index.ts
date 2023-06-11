@@ -1,5 +1,5 @@
 import { SapphireClient } from "@sapphire/framework";
-import { GatewayIntentBits } from "discord.js";
+import { GatewayIntentBits, Partials } from "discord.js";
 
 // Interaction Conditions Handler
 import { InteractionConditions } from "./utils/preconditions/InteractionConditions";
@@ -16,7 +16,14 @@ const bot = new SapphireClient({
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.DirectMessageTyping,
     ],
+    partials: [Partials.Channel],
     baseUserDirectory: __dirname + "/",
     loadMessageCommandListeners: true,
     defaultPrefix: "f>",

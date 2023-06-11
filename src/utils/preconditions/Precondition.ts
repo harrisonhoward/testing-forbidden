@@ -10,7 +10,7 @@ import { isMessage } from "../isMessage";
 import { renderFailureEmbed } from "./FailureEmbed";
 
 export interface PreconditionOptions extends AllFlowsPrecondition.Options {
-    onFailure: string;
+    onFailure?: string;
 }
 
 export abstract class Precondition extends AllFlowsPrecondition {
@@ -46,6 +46,7 @@ export abstract class Precondition extends AllFlowsPrecondition {
     ): boolean;
 
     public hasFailed: Condition["hasFailed"] = (interaction, callback?) => {
+        if (!this.onFailure) return;
         let reply;
         if (isMessage(interaction)) {
             reply = interaction.reply({
