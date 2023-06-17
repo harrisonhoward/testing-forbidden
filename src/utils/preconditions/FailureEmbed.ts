@@ -10,6 +10,6 @@ export const renderFailureEmbed = (
         .setTitle("Command Failure")
         .setDescription(content)
         .setAuthor({
-            name: message.author.tag,
+            name: message.author.username,
             iconURL: message.author.displayAvatarURL(),
         });

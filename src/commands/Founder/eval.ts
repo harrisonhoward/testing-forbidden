@@ -18,7 +18,7 @@ export class EvalCommand extends Command {
             .setColor(0x2095ab)
             .setTimestamp()
             .setAuthor({
-                name: message.author.tag,
+                name: message.author.username,
                 iconURL: message.author.displayAvatarURL(),
             });
 
