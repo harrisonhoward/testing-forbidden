@@ -17,6 +17,8 @@ interface Env {
     DB_DATABASE: string;
     DB_USERNAME: string;
     DB_PASSWORD: string;
+    // API Settings
+    CAT_API: string;
 }
 
 // Create a type for our database provider
