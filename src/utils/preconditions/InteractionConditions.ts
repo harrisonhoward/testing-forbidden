@@ -1,4 +1,3 @@
-import { PreconditionEntryResolvable } from "@sapphire/framework";
 import type {
     MessageComponentInteraction,
     Message,
@@ -14,7 +13,7 @@ export interface Condition {
             | CommandInteraction
             | ContextMenuCommandInteraction
             | MessageComponentInteraction
-    ): boolean;
+    ): boolean | Promise<boolean>;
     hasFailed<T extends Function | undefined>(
         interaction: CommandInteraction | MessageComponentInteraction | Message,
         callback?: T
@@ -86,22 +85,69 @@ export class InteractionConditions {
     }
 
     /**
+     * This will only check the provided preconditions
+     * Truthy if all preconditions pass
      *
-     * @param preconditons Manual preconditions to execute
+     * @param interaction
+     * @param conditions
      */
-    public passPreconditions(
+    public async checkPreconditions(
         interaction: CommandInteraction | MessageComponentInteraction | Message,
-        conditions?: string[] | PreconditionEntryResolvable[]
-    ): boolean {
-        const manualPreconditions = this.globalConditions.filter((condition) =>
-            conditions?.includes(condition.key)
+        conditions?: string[]
+    ): Promise<boolean> {
+        // Convert the inputted conditions into a dictionary
+        const conditionsByKey = (conditions || []).reduce(
+            (acc: Record<string, boolean>, condition) => ({
+                ...acc,
+                [condition]: true,
+            }),
+            {}
         );
+        // Return an array of all the preconditions found
+        const conditionsToCheck = this.conditions.filter(
+            (condition) => conditionsByKey[condition.key]
+        );
+        // Return the response
+        for (const condition of conditionsToCheck) {
+            const isValid = await condition.precondition.isValid(interaction);
+            if (!isValid) return false;
+        }
+        return true;
+    }
+
+    /**
+     * This will check if the manual preconditions and global conditions passed.
+     * Automatically throws an error
+     *
+     * @param interaction
+     * @param conditions Manual preconditions to execute
+     */
+    public async passPreconditions(
+        interaction: CommandInteraction | MessageComponentInteraction | Message,
+        conditions?: string[]
+    ): Promise<boolean> {
+        // Convert the inputted conditions into a dictionary
+        const conditionsByKey = (conditions || []).reduce(
+            (acc: Record<string, boolean>, condition) => ({
+                ...acc,
+                [condition]: true,
+            }),
+            {}
+        );
+        // Return all the valid manual preconditions
+        const manualPreconditions = this.manualConditions.filter(
+            (condition) => conditionsByKey[condition.key]
+        );
+        // Include all global preconditions in the array
         const conditionsToCheck = [
             ...this.globalConditions,
             ...manualPreconditions,
         ];
+        // Loop the array and run the `isValid` method
+        // If it isn't valid run the `hasFailed` method and return the result
         for (const condition of conditionsToCheck) {
-            if (!condition.precondition.isValid(interaction)) {
+            const isValid = await condition.precondition.isValid(interaction);
+            if (!isValid) {
                 condition.precondition.hasFailed(interaction);
                 return false;
             }

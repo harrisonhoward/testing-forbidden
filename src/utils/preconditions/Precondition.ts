@@ -47,7 +47,7 @@ export abstract class Precondition extends AllFlowsPrecondition {
             | CommandInteraction
             | ContextMenuCommandInteraction
             | MessageComponentInteraction
-    ): boolean;
+    ): boolean | Promise<boolean>;
 
     public hasFailed: Condition["hasFailed"] = (interaction, callback?) => {
         if (!this.onFailure) return;

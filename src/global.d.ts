@@ -14,13 +14,20 @@ interface Env {
     /**
      * @default "true"
      */
-    DATABASE_ENABLED: "true" | "false";
+    DATABASE_ENABLED?: "true" | "false";
+
+    // Server settings
+    HOME_SERVER_ID: string;
+    MANAGER_ROLE_ID: string;
+    STAFF_ROLE_ID: string;
+
     // Database provider
     DB_HOSTNAME: string;
     DB_PORT: number;
     DB_DATABASE: string;
     DB_USERNAME: string;
     DB_PASSWORD: string;
+
     // API Settings
     CAT_API: string;
 }
@@ -30,7 +37,7 @@ type BotProvider = MongoProvider<{ guilds: typeof Schemas.GuildSchema }>;
 
 declare global {
     namespace NodeJS {
-        // Include out environment variables in process.env
+        // Include our environment variables in process.env
         interface ProcessEnv extends Env {}
     }
     namespace globalThis {

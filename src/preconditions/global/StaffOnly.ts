@@ -1,4 +1,3 @@
-import { Piece } from "@sapphire/framework";
 import type {
     CommandInteraction,
     ContextMenuCommandInteraction,
@@ -13,6 +12,7 @@ import {
 
 // Util
 import { isMessage } from "../../utils/isMessage";
+import { isUserStaff } from "../../utils/envUtil";
 
 export class StaffOnlyPrecondition extends Precondition {
     public constructor(context: LoaderContext, options: PreconditionOptions) {
@@ -31,9 +31,10 @@ export class StaffOnlyPrecondition extends Precondition {
             | ContextMenuCommandInteraction
             | MessageComponentInteraction
     ) {
-        // TODO: Improve detection at the moment hard coding the IDs
-        return ["305488176267526147", "186683613440376833"].includes(
-            isMessage(interaction) ? interaction.author.id : interaction.user.id
-        );
+        const authorID = isMessage(interaction)
+            ? interaction.author.id
+            : interaction.user.id;
+
+        return isUserStaff(interaction.client, authorID);
     }
 }
