@@ -28,6 +28,9 @@ export class DatabaseConnectionPrecondition extends Precondition {
             | ContextMenuCommandInteraction
             | MessageComponentInteraction
     ) {
-        return interaction.client.provider.isConnected();
+        return (
+            process.env.DATABASE_ENABLED === "false" ||
+            interaction.client.provider.isConnected()
+        );
     }
 }

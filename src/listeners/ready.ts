@@ -36,5 +36,9 @@ export class ReadyListener extends Listener {
             },
             { guilds: Schemas.GuildSchema }
         );
+        // Only enable the databasse if the environment variable is set
+        if (process.env.DATABASE_ENABLED === "true") {
+            bot.provider.connect();
+        }
     }
 }

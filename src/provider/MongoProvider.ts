@@ -75,8 +75,6 @@ export class MongoProvider<
         // Create a model for each schema
         this.models = schemaToModel(schemas);
 
-        this.connect();
-
         this.initialise = this.initialise.bind(this);
         this.connect = this.connect.bind(this);
         this.reconnect = this.reconnect.bind(this);

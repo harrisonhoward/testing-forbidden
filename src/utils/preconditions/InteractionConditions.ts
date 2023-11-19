@@ -1,3 +1,4 @@
+import { PreconditionEntryResolvable } from "@sapphire/framework";
 import type {
     MessageComponentInteraction,
     Message,
@@ -89,8 +90,8 @@ export class InteractionConditions {
      * @param preconditons Manual preconditions to execute
      */
     public passPreconditions(
-        interaction: MessageComponentInteraction,
-        conditions?: string[]
+        interaction: CommandInteraction | MessageComponentInteraction | Message,
+        conditions?: string[] | PreconditionEntryResolvable[]
     ): boolean {
         const manualPreconditions = this.globalConditions.filter((condition) =>
             conditions?.includes(condition.key)

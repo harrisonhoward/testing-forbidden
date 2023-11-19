@@ -11,6 +11,10 @@ import { InteractionConditions } from "./utils/preconditions/InteractionConditio
 interface Env {
     // Bot settings
     BOT_TOKEN: string;
+    /**
+     * @default "true"
+     */
+    DATABASE_ENABLED: "true" | "false";
     // Database provider
     DB_HOSTNAME: string;
     DB_PORT: number;
