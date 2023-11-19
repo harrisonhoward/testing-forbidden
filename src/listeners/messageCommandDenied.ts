@@ -1,6 +1,7 @@
 import {
     Events,
     Listener,
+    container,
     type MessageCommandDeniedPayload,
     type UserError,
 } from "@sapphire/framework";
@@ -13,7 +14,7 @@ export class MessageCommandDenied extends Listener<
         { message }: MessageCommandDeniedPayload
     ) {
         const condition =
-            this.container.client.interactionConditions.conditions.find(
+            container.client.interactionConditions.conditions.find(
                 (condition) => condition.key === error.identifier
             );
         if (condition) {

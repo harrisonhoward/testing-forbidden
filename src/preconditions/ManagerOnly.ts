@@ -6,6 +6,7 @@ import type {
     MessageComponentInteraction,
 } from "discord.js";
 import {
+    LoaderContext,
     Precondition,
     PreconditionOptions,
 } from "../utils/preconditions/Precondition";
@@ -14,7 +15,7 @@ import {
 import { isMessage } from "../utils/isMessage";
 
 export class ManagerOnlyPrecondition extends Precondition {
-    public constructor(context: Piece.Context, options: PreconditionOptions) {
+    public constructor(context: LoaderContext, options: PreconditionOptions) {
         super(context, {
             ...options,
             name: "ManagerOnly",

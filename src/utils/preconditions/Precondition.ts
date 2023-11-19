@@ -1,4 +1,4 @@
-import { AllFlowsPrecondition, Piece } from "@sapphire/framework";
+import { AllFlowsPrecondition, container } from "@sapphire/framework";
 import {
     CommandInteraction,
     ContextMenuCommandInteraction,
@@ -9,27 +9,31 @@ import { Condition, InteractionConditionType } from "./InteractionConditions";
 import { isMessage } from "../isMessage";
 import { renderFailureEmbed } from "./FailureEmbed";
 
+export type LoaderContext = AllFlowsPrecondition.LoaderContext;
+
 export interface PreconditionOptions extends AllFlowsPrecondition.Options {
     onFailure?: string;
 }
 
 export abstract class Precondition extends AllFlowsPrecondition {
+    public name: string;
     public onFailure: PreconditionOptions["onFailure"];
 
-    constructor(context: Piece.Context, options: PreconditionOptions) {
+    constructor(context: LoaderContext, options: PreconditionOptions) {
         super(context, options);
+        this.name = options.name || context.name;
         this.onFailure = options.onFailure;
 
         // If options contains order then we know the condition type;
         if (typeof options.position === "number") {
-            this.container.client.interactionConditions.addPrecondition({
+            container.client.interactionConditions.addPrecondition({
                 key: this.name,
                 type: InteractionConditionType.Global,
                 precondition: this,
                 order: options.position,
             });
         } else {
-            this.container.client.interactionConditions.addPrecondition({
+            container.client.interactionConditions.addPrecondition({
                 key: this.name,
                 type: InteractionConditionType.Manual,
                 precondition: this,

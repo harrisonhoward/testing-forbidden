@@ -1,10 +1,10 @@
 import {
     InteractionHandler as SF_InteractionHandler,
-    PieceContext,
-    Option,
+    container,
 } from "@sapphire/framework";
-import { Awaitable } from "@sapphire/utilities";
 import type { Interaction, ButtonInteraction } from "discord.js";
+
+export type LoaderContext = SF_InteractionHandler.LoaderContext;
 
 export interface InteractionHandlerOptions
     extends SF_InteractionHandler.Options {
@@ -16,7 +16,7 @@ export abstract class InteractionHandler extends SF_InteractionHandler {
     public id: string;
     public preconditions?: string[];
 
-    public constructor(ctx: PieceContext, options: InteractionHandlerOptions) {
+    public constructor(ctx: LoaderContext, options: InteractionHandlerOptions) {
         super(ctx, options);
         this.id = options.id;
         this.preconditions = options.preconditions;
@@ -25,7 +25,7 @@ export abstract class InteractionHandler extends SF_InteractionHandler {
     public override parse(interaction: ButtonInteraction) {
         if (
             interaction.customId !== this.id ||
-            !this.container.client.interactionConditions.passPreconditions(
+            !container.client.interactionConditions.passPreconditions(
                 interaction,
                 this.preconditions
             )
@@ -34,5 +34,7 @@ export abstract class InteractionHandler extends SF_InteractionHandler {
         return this.validate(interaction);
     }
 
-    abstract validate(interaction: Interaction): Awaitable<Option<unknown>>;
+    abstract validate(
+        interaction: Interaction
+    ): ReturnType<SF_InteractionHandler["parse"]>;
 }

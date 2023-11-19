@@ -12,9 +12,9 @@
     "author": "Harrison Howard (Duck#9999)",
     "license": "MIT",
     "dependencies": {
-        "@sapphire/framework": "^4.2.2",
+        "@sapphire/framework": "^4.8.2",
         "@sapphire/plugin-logger": "^3.0.1",
-        "discord.js": "14",
+        "discord.js": "^14.14.1",
         "dotenv": "^16.0.3",
         "mongoose": "^7.0.3"
     },

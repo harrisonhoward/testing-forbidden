@@ -1,4 +1,4 @@
-import { Listener } from "@sapphire/framework";
+import { Listener, container } from "@sapphire/framework";
 import type { Client } from "discord.js";
 
 // Provider
@@ -18,7 +18,7 @@ export class ReadyListener extends Listener {
         if (!bot.user) {
             throw new Error("Ready: Bot has initialised without a user");
         }
-        this.container.logger.info(
+        container.logger.info(
             `Ready: Bot has initialised as ${bot.user.tag} (${bot.user.id})`
         );
 

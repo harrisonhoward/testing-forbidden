@@ -3,6 +3,7 @@ import {
     Listener,
     type ChatInputCommandDeniedPayload,
     type UserError,
+    container,
 } from "@sapphire/framework";
 
 export class ChatInputCommandDenied extends Listener<
@@ -13,7 +14,7 @@ export class ChatInputCommandDenied extends Listener<
         { interaction }: ChatInputCommandDeniedPayload
     ) {
         const condition =
-            this.container.client.interactionConditions.conditions.find(
+            container.client.interactionConditions.conditions.find(
                 (condition) => condition.key === error.identifier
             );
         if (condition) {

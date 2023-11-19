@@ -1,4 +1,3 @@
-import { Piece } from "@sapphire/framework";
 import type {
     CommandInteraction,
     ContextMenuCommandInteraction,
@@ -6,12 +5,13 @@ import type {
     MessageComponentInteraction,
 } from "discord.js";
 import {
+    LoaderContext,
     Precondition,
     PreconditionOptions,
 } from "../../utils/preconditions/Precondition";
 
 export class DatabaseConnectionPrecondition extends Precondition {
-    public constructor(context: Piece.Context, options: PreconditionOptions) {
+    public constructor(context: LoaderContext, options: PreconditionOptions) {
         super(context, {
             ...options,
             name: "DatabaseConnection",
