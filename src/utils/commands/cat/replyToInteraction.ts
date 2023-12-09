@@ -9,7 +9,10 @@ import {
 
 // Utils
 import { fetchCat } from "./fetchCat";
-import { isMessageComponentInteraction } from "../../isMessageComponentInteraction";
+import {
+    autoDeferReply,
+    sendDeferredResponse,
+} from "../../interactions/interactionReplyUtil";
 
 // Button ID
 import { catRefreshButtonID } from "../../../commands/Basic/cat";
@@ -17,15 +20,7 @@ import { catRefreshButtonID } from "../../../commands/Basic/cat";
 export async function replyToInteraction(
     interaction: ChatInputCommandInteraction | MessageComponentInteraction
 ) {
-    const fromMessageComponent = isMessageComponentInteraction(interaction);
-    // Defer the interaction if it hasn't already been (command interaction)
-    if (
-        !fromMessageComponent &&
-        !interaction.deferred &&
-        !interaction.replied
-    ) {
-        await interaction.deferReply();
-    }
+    await autoDeferReply(interaction);
 
     // Buttons
     const refreshButton = new ButtonBuilder() //
@@ -50,16 +45,9 @@ export async function replyToInteraction(
     const cat = await fetchCat(interaction, embed);
     if (typeof cat === "string") {
         embed.setImage(cat);
-        const responseObj = {
-            content: "",
+        return sendDeferredResponse(interaction, {
             embeds: [embed],
             components: [row],
-        };
-        // A button interaction caused this function to be called
-        if (fromMessageComponent && !interaction.replied) {
-            return interaction.update(responseObj);
-        }
-        // A command interaction cause this function to be called
-        return interaction.editReply(responseObj);
+        });
     }
 }

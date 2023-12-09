@@ -7,21 +7,16 @@ import {
     MessageComponentInteraction,
 } from "discord.js";
 
-import { isMessageComponentInteraction } from "../../isMessageComponentInteraction";
 import { getCommandsByGroup } from "./util";
+import {
+    autoDeferReply,
+    sendDeferredResponse,
+} from "../../interactions/interactionReplyUtil";
 
 export async function replyWithGroups(
     interaction: ChatInputCommandInteraction | MessageComponentInteraction
 ) {
-    const fromMessageComponent = isMessageComponentInteraction(interaction);
-    // Defer the ineraction if it hasn't already been (command interaction)
-    if (
-        !fromMessageComponent &&
-        !interaction.deferred &&
-        !interaction.replied
-    ) {
-        await interaction.deferReply();
-    }
+    await autoDeferReply(interaction);
 
     const commandGroups = await getCommandsByGroup(
         interaction.client,
@@ -66,16 +61,8 @@ export async function replyWithGroups(
             },
         ]);
 
-    // Response to the interaction
-    const responseObj = {
-        content: "",
+    return sendDeferredResponse(interaction, {
         embeds: [embed],
         components: [row],
-    };
-    // A button interaction cause this function to be called
-    if (fromMessageComponent && !interaction.replied) {
-        return interaction.update(responseObj);
-    }
-    // A command interaction cause this function to be called
-    return interaction.editReply(responseObj);
+    });
 }
