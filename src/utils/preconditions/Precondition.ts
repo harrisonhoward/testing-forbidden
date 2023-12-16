@@ -76,7 +76,7 @@ export abstract class Precondition extends AllFlowsPrecondition {
             | CommandInteraction
             | ContextMenuCommandInteraction
     ) {
-        if (this.isValid(interaction)) {
+        if ((await this.isValid(interaction)) === true) {
             return this.ok();
         }
         return this.error({ identifier: this.name });

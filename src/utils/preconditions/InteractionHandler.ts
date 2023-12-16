@@ -22,13 +22,13 @@ export abstract class InteractionHandler extends SF_InteractionHandler {
         this.preconditions = options.preconditions;
     }
 
-    public override parse(interaction: ButtonInteraction) {
+    public override async parse(interaction: ButtonInteraction) {
         if (
             interaction.customId !== this.id ||
-            !container.client.interactionConditions.passPreconditions(
+            !(await container.client.interactionConditions.passPreconditions(
                 interaction,
                 this.preconditions
-            )
+            ))
         )
             return this.none();
         return this.validate(interaction);

@@ -9,7 +9,7 @@ import type { Client, Guild, Role } from "discord.js";
  * @param bot
  * @returns
  */
-export async function getHomeServer(
+export function getHomeServer(
     bot: Client,
     forceFetch?: boolean
 ): Promise<Guild> {
@@ -21,24 +21,17 @@ export async function getHomeServer(
         );
     }
 
-    // Get guild from cache
-    const homeServerFromCache = bot.guilds.cache.get(homeServerGuildID);
-
-    // Fetch the guild if it's not in the cache
-    if (forceFetch || !homeServerFromCache) {
-        const homeServerFromFetch = await bot.guilds
-            .fetch(homeServerGuildID)
-            .catch((err) => {
-                if (err.message === "Unknown Guild") {
-                    throw new Error(
-                        "Environment: Configured `HOME_SERVER_ID` is invalid or the bot is not within the server"
-                    );
-                }
-                throw err;
-            });
-        return homeServerFromFetch;
-    }
-    return homeServerFromCache;
+    // Get guild the guild
+    return bot.guilds
+        .fetch({ guild: homeServerGuildID, force: forceFetch })
+        .catch((err) => {
+            if (err.message === "Unknown Guild") {
+                throw new Error(
+                    "Environment: Configured `HOME_SERVER_ID` is invalid or the bot is not within the server"
+                );
+            }
+            throw err;
+        });
 }
 
 /**
@@ -53,7 +46,7 @@ export async function getManagerRole(
     forceFetch?: boolean
 ): Promise<Role> {
     // Get the home server
-    const homeServer = await getHomeServer(bot);
+    const homeServer = await getHomeServer(bot, true);
 
     // Check the environment variable has been set
     const managerRoleID = process.env.MANAGER_ROLE_ID;
@@ -63,32 +56,28 @@ export async function getManagerRole(
         );
     }
 
-    // Get the role from the cache
-    const managerRoleFromCache = homeServer.roles.cache.get(managerRoleID);
+    // Function that will handle the error since it can occur two different ways
+    const notFound = () => {
+        return new Error(
+            "Environment: Configured `MANAGER_ROLE_ID` is invalid"
+        );
+    };
+    // Get the role from the home server
+    const managerRole = await homeServer.roles
+        .fetch(managerRoleID, { force: forceFetch })
+        .catch((err) => {
+            if (err.message === "Unknown Role") {
+                throw notFound();
+            }
+            throw err;
+        });
 
-    // Fetch the role if it's not in the cache
-    if (forceFetch || !managerRoleFromCache) {
-        // Function that will handle the error since it can occur two different ways
-        const notFound = () => {
-            return new Error(
-                "Environment: Configured `MANAGER_ROLE_ID` is invalid"
-            );
-        };
-
-        const managerRoleFromFetch = await homeServer.roles
-            .fetch(managerRoleID)
-            .catch((err) => {
-                if (err.message === "Unknown Role") {
-                    throw notFound();
-                }
-                throw err;
-            });
-        if (!managerRoleFromFetch) {
-            throw notFound();
-        }
-        return managerRoleFromFetch;
+    // Double check the fetch returned the role
+    if (!managerRole) {
+        throw notFound();
     }
-    return managerRoleFromCache;
+
+    return managerRole;
 }
 
 /**
@@ -103,7 +92,7 @@ export async function getStaffRole(
     forceFetch?: boolean
 ): Promise<Role> {
     // Get the home server
-    const homeServer = await getHomeServer(bot);
+    const homeServer = await getHomeServer(bot, true);
 
     // Check the environment variable has been set
     const staffRoleID = process.env.STAFF_ROLE_ID;
@@ -113,32 +102,26 @@ export async function getStaffRole(
         );
     }
 
-    // Get the role from the cache
-    const staffRoleFromCache = homeServer.roles.cache.get(staffRoleID);
+    // Function that will handle the error since it can occur two different ways
+    const notFound = () => {
+        return new Error("Environment: Configured `STAFF_ROLE_ID` is invalid");
+    };
+    // Get the role from the home server
+    const staffRole = await homeServer.roles
+        .fetch(staffRoleID, { force: forceFetch })
+        .catch((err) => {
+            if (err.message === "Unknown Role") {
+                throw notFound();
+            }
+            throw err;
+        });
 
-    // Fetch the role if it's not in the cache
-    if (forceFetch || !staffRoleFromCache) {
-        // Function that will handle the error since it can occur two different ways
-        const notFound = () => {
-            return new Error(
-                "Environment: Configured `STAFF_ROLE_ID` is invalid"
-            );
-        };
-
-        const staffRoleFromFetch = await homeServer.roles
-            .fetch(staffRoleID)
-            .catch((err) => {
-                if (err.message === "Unknown Role") {
-                    throw notFound();
-                }
-                throw err;
-            });
-        if (!staffRoleFromFetch) {
-            throw notFound();
-        }
-        return staffRoleFromFetch;
+    // Double check the fetch returned the role
+    if (!staffRole) {
+        throw notFound();
     }
-    return staffRoleFromCache;
+
+    return staffRole;
 }
 
 // #endregion Getters
@@ -150,14 +133,15 @@ export async function getStaffRole(
  *
  * @param bot
  * @param userID The user ID to check
+ * @param forceFetch If we should force an update of the cache
  * @returns
  */
 export async function isUserManager(
     bot: Client,
-    userID: string
+    userID: string,
+    forceFetch?: boolean
 ): Promise<boolean> {
-    // Force fetch so we can updated member cache
-    const managerRole = await getManagerRole(bot, true);
+    const managerRole = await getManagerRole(bot, forceFetch);
     return !!managerRole.members.get(userID);
 }
 
@@ -166,14 +150,15 @@ export async function isUserManager(
  *
  * @param bot
  * @param userID The user ID to check
+ * @param forceFetch If we should force an update of the cache
  * @returns
  */
 export async function isUserStaff(
     bot: Client,
-    userID: string
+    userID: string,
+    forceFetch?: boolean
 ): Promise<boolean> {
-    // Force fetch so we can updated member cache
-    const staffRole = await getStaffRole(bot, true);
+    const staffRole = await getStaffRole(bot, forceFetch);
     return !!staffRole.members.get(userID) || isUserManager(bot, userID);
 }
 

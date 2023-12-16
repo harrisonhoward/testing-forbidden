@@ -110,7 +110,7 @@ export class InteractionConditions {
         // Return the response
         for (const condition of conditionsToCheck) {
             const isValid = await condition.precondition.isValid(interaction);
-            if (!isValid) return false;
+            if (isValid !== true) return false;
         }
         return true;
     }
@@ -147,7 +147,7 @@ export class InteractionConditions {
         // If it isn't valid run the `hasFailed` method and return the result
         for (const condition of conditionsToCheck) {
             const isValid = await condition.precondition.isValid(interaction);
-            if (!isValid) {
+            if (isValid !== true) {
                 condition.precondition.hasFailed(interaction);
                 return false;
             }

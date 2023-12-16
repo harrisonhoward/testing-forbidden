@@ -1,6 +1,9 @@
 import { Command, Args } from "@sapphire/framework";
 import { type Message, EmbedBuilder } from "discord.js";
 
+// Exposed imports
+import * as _envUtil from "../../utils/envUtil";
+
 export class EvalCommand extends Command {
     constructor(ctx: Command.Context, options: Command.Options) {
         super(ctx, {
@@ -48,6 +51,9 @@ export class EvalCommand extends Command {
                 inline: false,
             },
         ]);
+
+        // Expose variables
+        const envUtil = _envUtil;
 
         // Evaluate code
         try {
