@@ -10,27 +10,30 @@ export interface InteractionHandlerOptions
     extends SF_InteractionHandler.Options {
     id: string;
     preconditions?: string[];
+    skipIDCheck?: boolean;
 }
 
 export abstract class InteractionHandler extends SF_InteractionHandler {
     public id: string;
     public preconditions?: string[];
+    public skipIDCheck?: boolean;
 
     public constructor(ctx: LoaderContext, options: InteractionHandlerOptions) {
         super(ctx, options);
         this.id = options.id;
         this.preconditions = options.preconditions;
+        this.skipIDCheck = options.skipIDCheck;
     }
 
     public override async parse(interaction: ButtonInteraction) {
-        if (
-            interaction.customId !== this.id ||
-            !(await container.client.interactionConditions.passPreconditions(
+        const idPass = this.skipIDCheck || interaction.customId === this.id;
+        const preconditionsPass =
+            await container.client.interactionConditions.passPreconditions(
                 interaction,
                 this.preconditions
-            ))
-        )
-            return this.none();
+            );
+
+        if (!idPass || !preconditionsPass) return this.none();
         return this.validate(interaction);
     }
 
