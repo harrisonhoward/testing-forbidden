@@ -56,12 +56,11 @@ export abstract class Precondition extends AllFlowsPrecondition {
             reply = interaction.reply({
                 embeds: [renderFailureEmbed(interaction, this.onFailure)],
             });
+        } else if (interaction.deferred || interaction.replied) {
+            reply = interaction.editReply({
+                content: this.onFailure,
+            });
         } else {
-            if (interaction.deferred || interaction.replied) {
-                reply = interaction.editReply({
-                    content: this.onFailure,
-                });
-            }
             reply = interaction.reply({
                 content: this.onFailure,
                 ephemeral: true,
