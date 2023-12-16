@@ -9,10 +9,7 @@ import type { Client, Guild, Role } from "discord.js";
  * @param bot
  * @returns
  */
-export function getHomeServer(
-    bot: Client,
-    forceFetch?: boolean
-): Promise<Guild> {
+export function getHomeServer(bot: Client): Promise<Guild> {
     // Check the environment variable has been set
     const homeServerGuildID = process.env.HOME_SERVER_ID;
     if (!homeServerGuildID) {
@@ -23,7 +20,7 @@ export function getHomeServer(
 
     // Get guild the guild
     return bot.guilds
-        .fetch({ guild: homeServerGuildID, force: forceFetch })
+        .fetch({ guild: homeServerGuildID, force: true })
         .catch((err) => {
             if (err.message === "Unknown Guild") {
                 throw new Error(
@@ -41,12 +38,9 @@ export function getHomeServer(
  * @param bot
  * @returns
  */
-export async function getManagerRole(
-    bot: Client,
-    forceFetch?: boolean
-): Promise<Role> {
+export async function getManagerRole(bot: Client): Promise<Role> {
     // Get the home server
-    const homeServer = await getHomeServer(bot, true);
+    const homeServer = await getHomeServer(bot);
 
     // Check the environment variable has been set
     const managerRoleID = process.env.MANAGER_ROLE_ID;
@@ -64,7 +58,7 @@ export async function getManagerRole(
     };
     // Get the role from the home server
     const managerRole = await homeServer.roles
-        .fetch(managerRoleID, { force: forceFetch })
+        .fetch(managerRoleID, { force: true })
         .catch((err) => {
             if (err.message === "Unknown Role") {
                 throw notFound();
@@ -87,12 +81,9 @@ export async function getManagerRole(
  * @param bot
  * @returns
  */
-export async function getStaffRole(
-    bot: Client,
-    forceFetch?: boolean
-): Promise<Role> {
+export async function getStaffRole(bot: Client): Promise<Role> {
     // Get the home server
-    const homeServer = await getHomeServer(bot, true);
+    const homeServer = await getHomeServer(bot);
 
     // Check the environment variable has been set
     const staffRoleID = process.env.STAFF_ROLE_ID;
@@ -108,7 +99,7 @@ export async function getStaffRole(
     };
     // Get the role from the home server
     const staffRole = await homeServer.roles
-        .fetch(staffRoleID, { force: forceFetch })
+        .fetch(staffRoleID, { force: true })
         .catch((err) => {
             if (err.message === "Unknown Role") {
                 throw notFound();
@@ -138,10 +129,9 @@ export async function getStaffRole(
  */
 export async function isUserManager(
     bot: Client,
-    userID: string,
-    forceFetch?: boolean
+    userID: string
 ): Promise<boolean> {
-    const managerRole = await getManagerRole(bot, forceFetch);
+    const managerRole = await getManagerRole(bot);
     return !!managerRole.members.get(userID);
 }
 
@@ -155,10 +145,9 @@ export async function isUserManager(
  */
 export async function isUserStaff(
     bot: Client,
-    userID: string,
-    forceFetch?: boolean
+    userID: string
 ): Promise<boolean> {
-    const staffRole = await getStaffRole(bot, forceFetch);
+    const staffRole = await getStaffRole(bot);
     return !!staffRole.members.get(userID) || isUserManager(bot, userID);
 }
 
